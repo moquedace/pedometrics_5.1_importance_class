@@ -6,7 +6,6 @@ Authors: "Fernandes-Filho, Elpídio Inácio; Moquedace, Cássio Marques; Pereira
 ## Loading packages
 ```{r message=FALSE, warning=FALSE}
 pkg <- c("dplyr", "ggplot2", "stringr", "tidyr", "RColorBrewer", "data.table")
-
 sapply(pkg, require, character.only = T)
 ```
 
@@ -35,6 +34,7 @@ for (h in seq_along(varfact)) {
   df_imp <- df_imp %>% 
     mutate(predictor = str_replace(predictor, paste0(".*", varfact[h], ".*"),
                                    varfact[h]))
+  
 }
 ```
 
@@ -45,21 +45,21 @@ df_imp <- df_imp %>%
   summarise(importance = mean(importance))
 ```
 
+
 ## Loading a dataframe with final name of variables and function for counting repetitions
 ```{r message=FALSE, warning=FALSE}
 n_cova <- read.csv2("./data/name_cova.csv")
+
 print(n_cova)
 
 dfg_imp <- left_join(df_imp, n_cova, by = c("predictor" = "name_abr"))%>% 
   mutate(class = factor(class,
                         levels = sort(unique(df_imp$class)))) 
 
-
 n_fun1 <- function(x) {
   return(data.frame(y = 3.5 * 20,
                     label = length(x)))
 }
-
 
 n_fun2 <- function(x) {
   return(data.frame(y = 3.5 * 30,
@@ -74,6 +74,7 @@ n_clas <- dfg_imp$class %>% sort() %>% unique() %>% as.character()
 for (i in seq_along(n_clas)) {
   
   if (i == 1) {
+    
     imp_pred <- ggplot(filter(dfg_imp, class == n_clas[i]),
                        aes(x = importance,
                            y = reorder(name_comp, importance,
@@ -102,8 +103,6 @@ for (i in seq_along(n_clas)) {
                    fontface = "bold") +
       stat_summary(fun = mean, geom = "point", col = "red", shape = 15, size = 1.5,
                    position = position_dodge(0.75)) ; imp_pred
-    
-    
     
   } else {
     
@@ -138,8 +137,6 @@ for (i in seq_along(n_clas)) {
     
   }
   
-  
-  
 }
 ```
 
@@ -158,4 +155,3 @@ for (i in seq_along(n_clas)) {
 <p align="center">
 <img src="class_imp_ustult.jpg" width="800">
 </p>
-
